@@ -1,4 +1,5 @@
+import '../../../shared/response/response_presentation.dart';
+
 abstract class GetUsersUseCase {
-  Future<void> call();
+  Future<ResponsePresentation> call();
 }
-  
