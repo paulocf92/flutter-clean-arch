@@ -1,4 +1,3 @@
 abstract class GetUsersDataSource {
-  Future<void> call();
+  Future<Map<String, dynamic>> call();
 }
-  
