@@ -30,18 +30,29 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Contatos'),
       ),
       body: ListView.builder(
-          itemCount: controller.contacts.length,
-          itemBuilder: (_, index) {
-            final model = controller.contacts[index];
+        itemCount: controller.contacts.length,
+        itemBuilder: (_, index) {
+          final model = controller.contacts[index];
 
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(model.name?.substring(0, 2).toUpperCase() ?? ''),
-              ),
-              title: Text(model.name ?? ''),
-              subtitle: Text("${model.email ?? ''}\n${model.phone ?? ''}"),
-            );
-          }),
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(model.name?.substring(0, 2).toUpperCase() ?? ''),
+            ),
+            title: Text(model.name ?? ''),
+            subtitle: Text("${model.email ?? ''}\n${model.phone ?? ''}"),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          var res = await Modular.to.pushNamed('/add');
+
+          if (res == true) {
+            getData();
+          }
+        },
+      ),
     );
   }
 }
