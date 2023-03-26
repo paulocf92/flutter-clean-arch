@@ -1,21 +1,20 @@
-import 'package:dio/dio.dart';
+import 'package:flutter_clean_arch/app/modules/shared/http/http_client.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../data/datasources/get_users_datasource.dart';
 
-final $GetUsersDataSourceImpl = Bind.singleton((i) => GetUsersDataSourceImpl());
+final $GetUsersDataSourceImpl = Bind.singleton(
+  (i) => GetUsersDataSourceImpl(i()),
+);
 
 class GetUsersDataSourceImpl implements GetUsersDataSource {
-  GetUsersDataSourceImpl() {
-    httpClient.options.baseUrl = 'https://641f6769f228f1a83eb5f828.mockapi.io';
-    httpClient.options.connectTimeout = const Duration(seconds: 5);
-    httpClient.options.receiveTimeout = const Duration(seconds: 3);
-  }
-  final httpClient = Dio();
+  GetUsersDataSourceImpl(this._client);
+
+  final HttpClientAdapter _client;
 
   @override
   Future<List<Map<String, dynamic>>> call() async {
-    var res = await httpClient.get('/users');
-    return List.from(res.data);
+    var res = await _client.get('/users');
+    return List.from(res);
   }
 }
