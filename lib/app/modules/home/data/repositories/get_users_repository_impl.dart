@@ -14,10 +14,10 @@ class GetUsersRepositoryImpl implements GetUsersRepository {
   final GetUsersDataSource _getUsersDataSource;
 
   @override
-  Future<UserDto> call() async {
+  Future<List<UserDto>> call() async {
     try {
       var res = await _getUsersDataSource();
-      return UserDto.fromMap(res);
+      return res.map((e) => UserDto.fromMap(e)).toList();
     } catch (e) {
       rethrow;
     }
