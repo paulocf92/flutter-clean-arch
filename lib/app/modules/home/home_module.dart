@@ -1,6 +1,9 @@
 import 'package:flutter_clean_arch/app/modules/home/data/repositories/add_user_repository_impl.dart';
+import 'package:flutter_clean_arch/app/modules/home/data/repositories/delete_user_repository_impl.dart';
 import 'package:flutter_clean_arch/app/modules/home/domain/usecases/add_user_usecase_impl.dart';
+import 'package:flutter_clean_arch/app/modules/home/domain/usecases/delete_user_usecase_impl.dart';
 import 'package:flutter_clean_arch/app/modules/home/external/datasources/add_user_datasource_impl.dart';
+import 'package:flutter_clean_arch/app/modules/home/external/datasources/delete_user_datasource_impl.dart';
 import 'package:flutter_clean_arch/app/modules/home/presentation/add/add_controller.dart';
 import 'package:flutter_clean_arch/app/modules/home/presentation/add/add_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -17,14 +20,17 @@ class HomeModule extends Module {
     // DataSources
     $GetUsersDataSourceImpl,
     $AddUserDataSourceImpl,
+    $DeleteUserDataSourceImpl,
 
     // Repositories
     $GetUsersRepositoryImpl,
     $AddUserRepositoryImpl,
+    $DeleteUserRepositoryImpl,
 
     // Use Cases
     $GetUsersUseCaseImpl,
     $AddUserUseCaseImpl,
+    $DeleteUserUseCaseImpl,
 
     // Controllers
     $HomeController,
