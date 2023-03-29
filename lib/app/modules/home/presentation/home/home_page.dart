@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clean_arch/app/modules/home/domain/models/dtos/user_dto.dart';
 import 'package:flutter_clean_arch/app/modules/home/presentation/home/home_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,13 +36,35 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (_, index) {
           final model = controller.contacts[index];
 
-          return ListTile(
-            onTap: () => _confirmDelete(model),
-            leading: CircleAvatar(
-              child: Text(model.name?.substring(0, 2).toUpperCase() ?? ''),
+          return Slidable(
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              children: [
+                SlidableAction(
+                  flex: 2,
+                  onPressed: (_) => _updateContact(model),
+                  backgroundColor: Colors.yellow,
+                  foregroundColor: Colors.black,
+                  icon: Icons.edit_outlined,
+                  label: 'Alterar',
+                ),
+                SlidableAction(
+                  flex: 2,
+                  onPressed: (_) => _confirmDelete(model),
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  icon: Icons.delete_outlined,
+                  label: 'Remover',
+                ),
+              ],
             ),
-            title: Text(model.name ?? ''),
-            subtitle: Text("${model.email ?? ''}\n${model.phone ?? ''}"),
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Text(model.name?.substring(0, 2).toUpperCase() ?? ''),
+              ),
+              title: Text(model.name ?? ''),
+              subtitle: Text("${model.email ?? ''}\n${model.phone ?? ''}"),
+            ),
           );
         },
       ),
@@ -85,5 +108,13 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  _updateContact(UserDto model) async {
+    var res = await Modular.to.pushNamed('/add', arguments: model);
+
+    if (res == true) {
+      getData();
+    }
   }
 }

@@ -4,7 +4,9 @@ import 'package:flutter_clean_arch/app/modules/home/presentation/add/add_control
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+  const AddPage({this.userDto, super.key});
+
+  final UserDto? userDto;
 
   @override
   State<AddPage> createState() => _AddPageState();
@@ -14,12 +16,20 @@ class _AddPageState extends State<AddPage> {
   final controller = Modular.get<AddController>();
   final formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameTextController =
-      TextEditingController(text: 'Sid Silva');
-  final TextEditingController _emailTextController =
-      TextEditingController(text: 'sid@email.com');
-  final TextEditingController _phoneTextController =
-      TextEditingController(text: '99999999999');
+  final TextEditingController _nameTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _phoneTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.userDto != null) {
+      _nameTextController.text = widget.userDto?.name ?? '';
+      _emailTextController.text = widget.userDto?.email ?? '';
+      _phoneTextController.text = widget.userDto?.phone ?? '';
+    }
+  }
 
   void alertMessage(String message) {
     showDialog(
@@ -28,7 +38,7 @@ class _AddPageState extends State<AddPage> {
         return AlertDialog(
           title: const Text('Aviso'),
           content: Text(message),
-          actions: <Widget>[
+          actions: [
             ElevatedButton(
               onPressed: () => Modular.to.pop(),
               child: const Text('Fechar'),
@@ -43,7 +53,8 @@ class _AddPageState extends State<AddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Novo Contato'),
+        title:
+            Text(widget.userDto == null ? 'Novo Contato' : 'Alterar Contato'),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -63,7 +74,7 @@ class _AddPageState extends State<AddPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                  hintText: 'Nome Completo',
+                  hintText: 'Sid Silva',
                 ),
               ),
               const SizedBox(height: 10),
@@ -78,7 +89,7 @@ class _AddPageState extends State<AddPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                  hintText: 'E-mail',
+                  hintText: 'sid@email.com',
                 ),
               ),
               const SizedBox(height: 10),
@@ -93,29 +104,48 @@ class _AddPageState extends State<AddPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                  hintText: 'Telefone',
+                  hintText: '99999999999',
                 ),
               ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    var res = await controller.addContact(UserDto(
-                      name: _nameTextController.text,
-                      email: _emailTextController.text,
-                      phone: _phoneTextController.text,
-                    ));
+                    // Adicionar
+                    if (widget.userDto == null) {
+                      var res = await controller.addContact(UserDto(
+                        name: _nameTextController.text,
+                        email: _emailTextController.text,
+                        phone: _phoneTextController.text,
+                      ));
 
-                    if (res.success) {
-                      alertMessage('Contato adicionado!');
-                      Modular.to.pop();
-                      Modular.to.pop(true);
+                      if (res.success) {
+                        alertMessage('Contato adicionado!');
+                        Modular.to.pop();
+                        Modular.to.pop(true);
+                      } else {
+                        alertMessage(res.message ?? 'Error');
+                      }
                     } else {
-                      alertMessage(res.message ?? 'Error');
+                      // Alterar
+                      var res = await controller.editContact(UserDto(
+                        id: widget.userDto!.id,
+                        name: _nameTextController.text,
+                        email: _emailTextController.text,
+                        phone: _phoneTextController.text,
+                      ));
+
+                      if (res.success) {
+                        alertMessage('Contato alterado!');
+                        Modular.to.pop();
+                        Modular.to.pop(true);
+                      } else {
+                        alertMessage(res.message ?? 'Error');
+                      }
                     }
                   }
                 },
-                child: const Text('Adicionar'),
+                child: Text(widget.userDto == null ? 'Adicionar' : 'Alterar'),
               ),
             ],
           ),
